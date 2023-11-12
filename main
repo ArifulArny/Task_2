@@ -1,0 +1,42 @@
+import pymongo
+
+# Connect to the MongoDB database
+client = pymongo.MongoClient("mongodb://localhost:27017/")
+db = client["task_manager"]
+tasks_collection = db["tasks"]
+
+# Add a new task
+def add_task(title, description, status, due_date):
+    task = {
+        "title": title,
+        "description": description,
+        "status": status,
+        "due_date": due_date
+    }
+    tasks_collection.insert_one(task)
+
+# Retrieve a task by ID
+def get_task_by_id(task_id):
+    task = tasks_collection.find_one({"_id": task_id})
+    return task
+# Update a task
+def update_task(task_id, new_title, new_description, new_status, new_due_date):
+    tasks_collection.update_one({"_id": task_id}, {
+        "$set": {
+            "title": new_title,
+            "description": new_description,
+            "status": new_status,
+            "due_date": new_due_date
+        }
+    })
+
+# Delete a task
+def delete_task(task_id):
+    tasks_collection.delete_one({"_id": task_id})
+
+# Example usage
+add_task("Write a blog post", "This is a blog post about Python and MongoDB.", "pending", "2023-11-15")
+task = get_task_by_id("6376571022f4084b450996ac")
+print(task)
+update_task("6376571022f4084b450996ac", "Updated Blog Post Title", "This is an updated blog post about Python and MongoDB.", "in progress", "2023-11-17")
+delete_task("6376571022f4084b450996ac")
